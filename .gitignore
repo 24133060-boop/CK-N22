@@ -1,0 +1,13 @@
+.classpath
+.project
+.settings/
+target/
+.env
+*.log
+.idea/
+.env.*
+application-local.properties
+application-secret.properties
+*.bak
+
+.factorypath
