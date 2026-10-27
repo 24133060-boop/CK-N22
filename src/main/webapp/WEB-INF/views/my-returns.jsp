@@ -1,1 +1,99 @@
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %><%@ taglib prefix="c" uri="jakarta.tags.core" %><%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %><!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>UTEMILKTEA</title><link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"><link href="${pageContext.request.contextPath}/css/style.css" rel="stylesheet"></head><body><nav class="navbar navbar-expand-lg"><div class="container"><a class="navbar-brand" href="/">🍵 UTEMILKTEA</a><button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav"><span class="navbar-toggler-icon"></span></button><div class="collapse navbar-collapse" id="nav"><div class="navbar-nav ms-auto align-items-lg-center"><a class="nav-link" href="/">Trang chủ</a><a class="nav-link" href="/#stores">Chi nhánh</a><a class="nav-link" href="/#menu">Menu</a><sec:authorize access="isAuthenticated()"><sec:authorize access="hasRole('USER')"><a class="nav-link" href="/cart">Giỏ hàng</a><a class="nav-link" href="/my-orders">Đơn hàng</a><a class="nav-link" href="/favorites">Yêu thích</a></sec:authorize><sec:authorize access="hasRole('VENDOR')"><a class="nav-link" href="/vendor">Cửa hàng của tôi</a></sec:authorize><sec:authorize access="hasRole('MANAGER')"><a class="nav-link" href="/manager">Manager</a></sec:authorize><sec:authorize access="hasRole('ADMIN')"><a class="nav-link" href="/admin">Quản trị</a></sec:authorize><sec:authorize access="hasRole('SHIPPER')"><a class="nav-link" href="/shipper">Giao hàng</a></sec:authorize><div class="dropdown ms-lg-2"><button class="btn btn-outline-success dropdown-toggle rounded-pill" data-bs-toggle="dropdown" type="button">👤 <sec:authentication property="name"/></button><ul class="dropdown-menu dropdown-menu-end"><li><a class="dropdown-item" href="/profile">Hồ sơ cá nhân</a></li><sec:authorize access="hasRole('USER')"><li><a class="dropdown-item" href="/my-orders">Đơn hàng của tôi</a></li></sec:authorize><li><hr class="dropdown-divider"></li><li><form method="post" action="/logout"><input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"><button class="dropdown-item text-danger" type="submit">Đăng xuất</button></form></li></ul></div></sec:authorize><sec:authorize access="!isAuthenticated()"><a class="nav-link" href="/login">Đăng nhập</a><a class="btn btn-primary ms-lg-2" href="/register">Đăng ký</a></sec:authorize></div></div></div></nav><main class="container py-4"><h2>Yêu cầu trả hàng / hoàn tiền</h2><p class="text-muted">Hoàn tiền cần được kiểm tra và thực hiện ngoài hệ thống; trạng thái được duyệt không xác nhận đã chuyển tiền.</p><c:forEach var="r" items="${returns}"><div class="card p-3 my-2"><strong>Đơn #${r.order.id} · ${r.status}</strong><p><c:out value="${r.reason}"/></p><p><c:out value="${r.response}"/></p></div></c:forEach></main><footer class="footer"><div class="container">UTEMILKTEA · Trà sữa mỗi ngày, niềm vui mỗi ngụm · Dự án học tập</div></footer><script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script></body></html>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>UTEMILKTEA</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="${pageContext.request.contextPath}/css/style.css" rel="stylesheet">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg">
+<div class="container">
+<a class="navbar-brand" href="/">🍵 UTEMILKTEA</a>
+<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+<span class="navbar-toggler-icon">
+</span>
+</button>
+<div class="collapse navbar-collapse" id="nav">
+<div class="navbar-nav ms-auto align-items-lg-center">
+<a class="nav-link" href="/">Trang chủ</a>
+<a class="nav-link" href="/#stores">Chi nhánh</a>
+<a class="nav-link" href="/#menu">Menu</a>
+<sec:authorize access="isAuthenticated()">
+<sec:authorize access="hasRole('USER')">
+<a class="nav-link" href="/cart">Giỏ hàng</a>
+<a class="nav-link" href="/my-orders">Đơn hàng</a>
+<a class="nav-link" href="/favorites">Yêu thích</a>
+</sec:authorize>
+<sec:authorize access="hasRole('VENDOR')">
+<a class="nav-link" href="/vendor">Cửa hàng của tôi</a>
+</sec:authorize>
+<sec:authorize access="hasRole('MANAGER')">
+<a class="nav-link" href="/manager">Manager</a>
+</sec:authorize>
+<sec:authorize access="hasRole('ADMIN')">
+<a class="nav-link" href="/admin">Quản trị</a>
+</sec:authorize>
+<sec:authorize access="hasRole('SHIPPER')">
+<a class="nav-link" href="/shipper">Giao hàng</a>
+</sec:authorize>
+<div class="dropdown ms-lg-2">
+<button class="btn btn-outline-success dropdown-toggle rounded-pill" data-bs-toggle="dropdown" type="button">👤 <sec:authentication property="name"/>
+</button>
+<ul class="dropdown-menu dropdown-menu-end">
+<li>
+<a class="dropdown-item" href="/profile">Hồ sơ cá nhân</a>
+</li>
+<sec:authorize access="hasRole('USER')">
+<li>
+<a class="dropdown-item" href="/my-orders">Đơn hàng của tôi</a>
+</li>
+</sec:authorize>
+<li>
+<hr class="dropdown-divider">
+</li>
+<li>
+<form method="post" action="/logout">
+<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}">
+<button class="dropdown-item text-danger" type="submit">Đăng xuất</button>
+</form>
+</li>
+</ul>
+</div>
+</sec:authorize>
+<sec:authorize access="!isAuthenticated()">
+<a class="nav-link" href="/login">Đăng nhập</a>
+<a class="btn btn-primary ms-lg-2" href="/register">Đăng ký</a>
+</sec:authorize>
+</div>
+</div>
+</div>
+</nav>
+<main class="container py-4">
+<h2>Yêu cầu trả hàng / hoàn tiền</h2>
+<p class="text-muted">Hoàn tiền cần được kiểm tra và thực hiện ngoài hệ thống; trạng thái được duyệt không xác nhận đã chuyển tiền.</p>
+<c:forEach var="r" items="${returns}">
+<div class="card p-3 my-2">
+<strong>Đơn #${r.order.id} · ${r.status}</strong>
+<c:if test="${r.status eq 'APPROVED'}"><div class="alert alert-warning mt-2">Yêu cầu đã được duyệt, cửa hàng chưa xác nhận hoàn tiền.</div></c:if>
+<c:if test="${r.status eq 'REFUNDED'}"><div class="alert alert-success mt-2">Đã ghi nhận hoàn ${r.refundAmount} đ vào ${r.refundedAt}. Mã đối soát: <c:out value="${r.refundReference}"/></div></c:if>
+<p>
+<c:out value="${r.reason}"/>
+</p>
+<p>
+<c:out value="${r.response}"/>
+</p>
+</div>
+</c:forEach>
+</main>
+<footer class="footer">
+<div class="container">UTEMILKTEA · Trà sữa mỗi ngày, niềm vui mỗi ngụm · Dự án học tập</div>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+</body>
+</html>

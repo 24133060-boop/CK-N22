@@ -134,7 +134,7 @@ import vn.edu.ute.milktea.service.OrderService;
         return "register";
     }
     @GetMapping("/order/{id}") String orderForm(@PathVariable Long id,Model m,Authentication a){
-        if(a!=null&&a.isAuthenticated()&&users.findByEmail(a.getName()).isPresent()&&"USER".equals(users.findByEmail(a.getName()).get().role)){
+        if(a!=null&&a.isAuthenticated()&&users.findByEmail(a.getName()).isPresent()&&java.util.Set.of("USER","VENDOR").contains(users.findByEmail(a.getName()).get().role)){
             var record=recentRepository.findByUserEmailAndProductId(a.getName(),id).orElseGet(RecentlyViewed::new);
             record.user=users.findByEmail(a.getName()).orElseThrow();
             record.product=products.findById(id).orElseThrow();

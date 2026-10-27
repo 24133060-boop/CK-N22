@@ -33,7 +33,7 @@ import vn.edu.ute.milktea.repository.*;
                 "Thủ Đức","Quận 1","Bình Thạnh","Gò Vấp","Dĩ An"}
             ;
             String[] demoAddresses={
-                "Khu vực Võ Văn Ngân, Thủ Đức (demo)","Khu vực Nguyễn Huệ, Quận 1 (demo)","Khu vực Phan Đăng Lưu, Bình Thạnh (demo)","Khu vực Quang Trung, Gò Vấp (demo)","Khu vực Trần Hưng Đạo, Dĩ An (demo)"}
+                "Khu vực Võ Văn Ngân, Thủ Đức","Khu vực Nguyễn Huệ, Quận 1","Khu vực Phan Đăng Lưu, Bình Thạnh","Khu vực Quang Trung, Gò Vấp","Khu vực Trần Hưng Đạo, Dĩ An"}
             ;
             double[] lats={
                 10.8505,10.7745,10.8025,10.8290,10.9060}
@@ -48,6 +48,9 @@ import vn.edu.ute.milktea.repository.*;
                         s.longitude=lons[i];
                     }
                     if(s.address==null||s.address.contains("minh họa"))s.address=demoAddresses[i];
+                    // Existing SQL Server records keep their address when restarting.
+                    // Remove only the old display suffix without changing the location.
+                    else if(s.address.endsWith(" (demo)"))s.address=s.address.substring(0,s.address.length()-7);
                     shops.save(s);
                     break;
                 }

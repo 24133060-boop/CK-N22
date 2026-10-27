@@ -25,7 +25,10 @@ public class SecurityConfig {
         return email -> {
             var u = repo.findByEmail(email)
             .orElseThrow(() -> new UsernameNotFoundException(email));
-            return User.withUsername(u.email).password(u.password).roles(u.role).build();
+            // Vendor inherits customer capabilities, while retaining shop-specific rights.
+            String[] roles = "VENDOR".equals(u.role)
+                ? new String[]{"USER", "VENDOR"} : new String[]{u.role};
+            return User.withUsername(u.email).password(u.password).roles(roles).build();
         }
         ;
     }

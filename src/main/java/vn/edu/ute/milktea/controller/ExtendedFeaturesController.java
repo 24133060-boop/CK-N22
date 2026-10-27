@@ -123,6 +123,23 @@ public class ExtendedFeaturesController {
         returns.save(r);
         return "redirect:/vendor/shop/"+r.order.shop.id+"/returns";
     }
+    /** Manual refund confirmation, not an electronic bank transfer. */
+    @PostMapping("/vendor/returns/{id}/refund") @org.springframework.transaction.annotation.Transactional
+    String confirmRefund(@PathVariable Long id,@RequestParam String reference,Authentication a,RedirectAttributes ra){
+        var r=returns.findById(id).orElseThrow();
+        requireVendor(a,r.order.shop);
+        if(!"APPROVED".equals(r.status))throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Chỉ hoàn tiền cho yêu cầu đã được duyệt và chưa hoàn tiền");
+        if(r.order.total==null||r.order.total.signum()<=0)throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Giá trị hoàn tiền không hợp lệ");
+        if(reference==null||reference.trim().length()<3||reference.trim().length()>100)throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Nhập mã giao dịch hoặc bằng chứng hoàn tiền (3–100 ký tự)");
+        r.refundAmount=r.order.total;
+        r.refundedAt=LocalDateTime.now();
+        r.refundedBy=a.getName();
+        r.refundReference=reference.trim();
+        r.status="REFUNDED";
+        returns.save(r);
+        ra.addFlashAttribute("success","Đã ghi nhận hoàn tiền thủ công cho đơn #"+r.order.id);
+        return "redirect:/vendor/shop/"+r.order.shop.id+"/returns";
+    }
     @GetMapping("/vendor/apply") String apply(Authentication a,Model m){
         m.addAttribute("applications",applications.findByApplicantEmailOrderByCreatedAtDesc(a.getName()));
         return "apply-shop";
