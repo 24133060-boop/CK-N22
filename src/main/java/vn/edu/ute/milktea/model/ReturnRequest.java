@@ -9,6 +9,11 @@ import java.math.*;
     @Column(columnDefinition="NVARCHAR(500)") public String reason;
     @Column(length=25) public String status="REQUESTED";
     @Column(columnDefinition="NVARCHAR(500)") public String response;
+    // Recorded only after a staff member confirms an external refund occurred.
+    @Column(precision=18,scale=2) public BigDecimal refundAmount;
+    public LocalDateTime refundedAt;
+    @Column(length=255) public String refundedBy;
+    @Column(length=100) public String refundReference;
     public LocalDateTime createdAt=LocalDateTime.now();
     public Long getId(){
         return id;
@@ -28,4 +33,8 @@ import java.math.*;
     public LocalDateTime getCreatedAt(){
         return createdAt;
     }
+    public BigDecimal getRefundAmount(){ return refundAmount; }
+    public LocalDateTime getRefundedAt(){ return refundedAt; }
+    public String getRefundedBy(){ return refundedBy; }
+    public String getRefundReference(){ return refundReference; }
 }
