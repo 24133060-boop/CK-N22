@@ -157,10 +157,10 @@ public class ManagementController {
         shops.save(shop);
         return "redirect:/manager/catalog?shopId="+shopId;
     }
-    @PostMapping("/admin/shops/{shopId}/commercial") String commercial(Authentication a,@PathVariable Long shopId,@RequestParam BigDecimal commissionPercent,@RequestParam(required=false) Long carrierId){
-        admin(a);
+    @PostMapping("/manager/shops/{shopId}/commercial") String commercial(Authentication a,@PathVariable Long shopId,@RequestParam BigDecimal commissionPercent,@RequestParam(required=false) Long carrierId){
+        // Manager controls only the shops assigned to them; Admin controls all.
+        Shop shop=authorizedShop(a,shopId);
         if(commissionPercent==null||commissionPercent.signum()<0||commissionPercent.compareTo(new BigDecimal("40"))>0)throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Chiết khấu phải từ 0 đến 40%");
-        Shop shop=shops.findById(shopId).orElseThrow();
         shop.commissionPercent=commissionPercent;
         if(carrierId==null){
             shop.deliveryProvider=null;
